@@ -1,31 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Modal,
-  Switch,
-} from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Modal, Linking } from 'react-native';
 
 const App = () => {
-  // Estado para mantener el tablero del juego
+  // Estado para el tablero de juego
   const [board, setBoard] = useState(Array(9).fill(''));
-
-  // Estado para mantener el jugador actual (X o O)
+  // Estado para el jugador actual
   const [player, setPlayer] = useState('X');
-
-  // Estado para mantener al ganador del juego o 'draw' si hay empate
+  // Estado para almacenar al ganador del juego
   const [winner, setWinner] = useState(null);
-
-  // Estado para controlar si el modal que muestra el resultado está visible
+  // Estado para controlar la visibilidad del modal de finalización del juego
   const [showModal, setShowModal] = useState(false);
-
-  // Estado para controlar el tema (oscuro o claro)
+  // Estado para el tema oscuro
   const [darkTheme, setDarkTheme] = useState(true);
 
-  // Efecto para comprobar si hay un ganador o empate en el tablero después de cada movimiento
   useEffect(() => {
+    // Verificar si hay un ganador después de cada movimiento
     const result = checkWinner();
     if (result) {
       setWinner(result);
@@ -33,9 +22,8 @@ const App = () => {
     }
   }, [board]);
 
-  // Función para comprobar si hay un ganador o empate en el tablero
+  // Función para verificar si hay un ganador
   const checkWinner = () => {
-    // Combinaciones ganadoras en el tablero
     const lines = [
       [0, 1, 2],
       [3, 4, 5],
@@ -47,43 +35,41 @@ const App = () => {
       [2, 4, 6]
     ];
 
-    // Comprueba todas las combinaciones para ver si hay un ganador
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
       if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        return board[a]; // Devuelve 'X' o 'O' como ganador
+        return board[a];
       }
     }
 
-    // Si el tablero no tiene más movimientos disponibles, hay un empate
     if (!board.includes('')) {
       return 'draw';
     }
 
-    return null; // Si no hay ganador ni empate, devuelve null
+    return null;
   };
 
-  // Función para manejar el evento de presionar un cuadrado en el tablero
+  // Manejar el evento de presionar un cuadro del tablero
   const handlePress = (index) => {
     if (board[index] || winner) {
-      return; // No se hace nada si el cuadrado ya está ocupado o ya hay un ganador
+      return;
     }
 
     const updatedBoard = [...board];
-    updatedBoard[index] = player; // Actualiza el tablero con el símbolo del jugador actual (X o O)
+    updatedBoard[index] = player;
     setBoard(updatedBoard);
-    setPlayer(player === 'X' ? 'O' : 'X'); // Cambia al siguiente jugador (alternando entre X y O)
+    setPlayer(player === 'X' ? 'O' : 'X');
   };
 
-  // Función para reiniciar el juego
+  // Reiniciar el juego
   const resetGame = () => {
     setBoard(Array(9).fill(''));
     setPlayer('X');
     setWinner(null);
-    setShowModal(false); // Oculta el modal con el resultado
+    setShowModal(false);
   };
 
-  // Función para renderizar un cuadrado en el tablero
+  // Renderizar un cuadro del tablero
   const renderSquare = (index) => {
     return (
       <TouchableOpacity
@@ -97,7 +83,7 @@ const App = () => {
     );
   };
 
-  // Función para renderizar el estado del juego (turno, ganador o empate)
+  // Renderizar el estado del juego (empate, ganador o turno del jugador)
   const renderStatus = () => {
     if (winner === 'draw') {
       return <Text style={[styles.status, darkTheme && styles.darkStatus]}>Empate</Text>;
@@ -108,14 +94,19 @@ const App = () => {
     }
   };
 
-  // Función para alternar entre el tema oscuro y claro
+  // Alternar entre el tema claro y oscuro
   const toggleTheme = () => {
     setDarkTheme(!darkTheme);
   };
 
+  // Abrir el enlace de descarga en el navegador
+  const openDownloadLink = () => {
+    Linking.openURL('https://drive.google.com/file/d/1nTKGKlyTLg6sF9i5fld35PhutQ0TnVqq/view?usp=sharing');
+  };
+
   return (
     <View style={[styles.container, darkTheme && styles.darkContainer]}>
-      <Text style={[styles.title, darkTheme && styles.darkTitle]}>Triqui X O</Text>
+      <Text style={[styles.title, darkTheme && styles.darkTitle]}>3 En raya</Text>
       <View style={styles.board}>
         <View style={styles.row}>
           {renderSquare(0)}
@@ -135,39 +126,30 @@ const App = () => {
       </View>
       {renderStatus()}
       <Modal visible={showModal} animationType="slide" transparent>
-        <View
-          style={[
-            styles.modalContainer,
-            darkTheme && styles.darkModalContainer,
-          ]}
-        >
+        <View style={[styles.modalContainer, darkTheme && styles.darkModalContainer]}>
           <View style={[styles.modalContent, darkTheme && styles.darkModalContent]}>
             <Text style={[styles.modalText, darkTheme && styles.darkModalText]}>
               {winner === 'draw' ? 'Empate' : `Ganador: ${winner}`}
             </Text>
-            <TouchableOpacity
-              style={[
-                styles.button,
-                darkTheme && styles.darkButton,
-              ]}
-              onPress={resetGame}
-            >
-              <Text style={[styles.buttonText, darkTheme && styles.darkButtonText]}>
-                Reiniciar juego
-              </Text>
+            <TouchableOpacity style={[styles.button, darkTheme && styles.darkButton]} onPress={resetGame}>
+              <Text style={[styles.buttonText, darkTheme && styles.darkButtonText]}>Reiniciar juego</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
       <View style={styles.themeToggle}>
-        <Text style={[styles.themeText, darkTheme && styles.darkThemeText]}>Tema oscuro</Text>
-        <Switch value={darkTheme} onValueChange={toggleTheme} />
+        <Text style={[styles.themeText, darkTheme && styles.darkThemeText]}>Tema oscuro:</Text>
+        <TouchableOpacity onPress={toggleTheme}>
+          <View style={styles.toggleButton} />
+        </TouchableOpacity>
       </View>
+      <TouchableOpacity style={styles.downloadButton} onPress={openDownloadLink}>
+        <Text style={styles.downloadButtonText}>Si quieres descargarlo, pulsa aquí</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
-// Estilos para los componentes
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -181,7 +163,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 36,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 40,
     color: '#333',
   },
   darkTitle: {
@@ -269,15 +251,35 @@ const styles = StyleSheet.create({
   themeToggle: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20,
+    marginBottom: 20,
   },
   themeText: {
     fontSize: 16,
     marginRight: 10,
+    color: '#333',
   },
   darkThemeText: {
     color: '#fff',
   },
+  toggleButton: {
+    width: 30,
+    height: 15,
+    borderRadius: 10,
+    backgroundColor: '#ccc',
+  },
+  downloadButton: {
+    backgroundColor: 'green',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+  },
+  downloadButtonText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+  },
 });
 
 export default App;
+
