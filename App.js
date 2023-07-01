@@ -106,7 +106,7 @@ const App = () => {
 
   return (
     <View style={[styles.container, darkTheme && styles.darkContainer]}>
-      <Text style={[styles.title, darkTheme && styles.darkTitle]}>3 En raya</Text>
+      <Text style={[styles.title, darkTheme && styles.darkTitle]}>TRIQUI</Text>
       <View style={styles.board}>
         <View style={styles.row}>
           {renderSquare(0)}
