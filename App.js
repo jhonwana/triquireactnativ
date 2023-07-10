@@ -144,7 +144,7 @@ const App = () => {
         </TouchableOpacity>
       </View>
       <TouchableOpacity style={styles.downloadButton} onPress={openDownloadLink}>
-        <Text style={styles.downloadButtonText}>Si quieres descargarlo, pulsa aquí</Text>
+        <Text style={styles.downloadButtonText}> Hola Gisela, este mensaje es para tí, ¡Espero te sientas mejor y qué tengas una muy linda noche ❤️! </Text>
       </TouchableOpacity>
     </View>
   );
